@@ -26,6 +26,8 @@ void User::setMovement(MovementCheck movement[]) {
 void User::changeMovement() {
 	qreal x = this->x();
 	qreal y = this->y();
+
+	// change position
 	if(movement[0] == MovementCheck::Moving) y -= 5;
 	if(movement[1] == MovementCheck::Moving) y += 5;
 	if(movement[2] == MovementCheck::Moving) x -= 5;

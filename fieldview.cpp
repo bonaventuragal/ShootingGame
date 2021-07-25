@@ -27,6 +27,7 @@ void FieldView::keyPressEvent(QKeyEvent *event) {
 		QGraphicsView::keyPressEvent(event);
 	}
 
+	// pass movement input to user object
 	QList<QGraphicsItem*> itemList = scene()->items();
 	for(int i = 0; i < itemList.size(); i++) {
 		if(itemList[i]->type() == QGraphicsItem::UserType) {
@@ -60,6 +61,7 @@ void FieldView::keyReleaseEvent(QKeyEvent *event) {
 		QGraphicsView::keyPressEvent(event);
 	}
 
+	// pass movement input to user object
 	QList<QGraphicsItem*> itemList = scene()->items();
 	for(int i = 0; i < itemList.size(); i++) {
 		if(itemList[i]->type() == QGraphicsItem::UserType) {
