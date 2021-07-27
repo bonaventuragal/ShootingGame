@@ -2,7 +2,9 @@
 #define USER_H
 
 #include "MovementCheck.h"
+#include "borderline.h"
 #include <QGraphicsItem>
+#include <QGraphicsScene>
 #include <QPainter>
 #include <QTimer>
 
@@ -21,6 +23,8 @@ public:
 private:
 	QTimer *timer;
 	MovementCheck movement[4];
+
+	void detectCollision();
 
 private slots:
 	void changeMovement();

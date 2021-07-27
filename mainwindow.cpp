@@ -10,11 +10,19 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->centralwidget->layout()->addWidget(view);
 
 	QGraphicsScene *scene = new QGraphicsScene();
-	view->setScene(scene);
+	scene->setSceneRect(0, 0, 400, 400);
 
-	user = new User();
-	user->setPos(view->width() / 2, view->height() / 2);
-	scene->addItem(user);
+	view->setScene(scene);
+	view->addUser();
+
+	BorderLine *topLine = new BorderLine(scene->sceneRect().topLeft(), scene->sceneRect().topRight(), BorderLine::Top);
+	BorderLine *bottomLine = new BorderLine(scene->sceneRect().bottomLeft(), scene->sceneRect().bottomRight(), BorderLine::Bottom);
+	BorderLine *leftLine = new BorderLine(scene->sceneRect().topLeft(), scene->sceneRect().bottomLeft(), BorderLine::Left);
+	BorderLine *rightLine = new BorderLine(scene->sceneRect().topRight(), scene->sceneRect().bottomRight(), BorderLine::Right);
+	scene->addItem(topLine);
+	scene->addItem(bottomLine);
+	scene->addItem(leftLine);
+	scene->addItem(rightLine);
 }
 
 MainWindow::~MainWindow() {

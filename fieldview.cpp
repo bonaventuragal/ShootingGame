@@ -1,7 +1,26 @@
 #include "fieldview.h"
 
-FieldView::FieldView(QWidget *parent) : QGraphicsView(parent) {
+FieldView::FieldView(QWidget *parent) : QGraphicsView(parent), mouseClick(true) {
+	mouseClickTimer = new QTimer();
+	connect(mouseClickTimer, SIGNAL(timeout()), this, SLOT(mouseClickTimeout()));
+}
 
+void FieldView::addUser() {
+	user = new User();
+	user->setPos(scene()->width() / 2 - 10, scene()->height() / 2 - 10);
+	scene()->addItem(user);
+}
+
+void FieldView::spawn() {
+	if(!mouseClickTimer->isActive()) {
+		mouseClick = false;
+		mouseClickTimer->start(300);
+	}
+}
+
+void FieldView::mouseClickTimeout() {
+	mouseClickTimer->stop();
+	mouseClick = true;
 }
 
 void FieldView::keyPressEvent(QKeyEvent *event) {
@@ -25,17 +44,10 @@ void FieldView::keyPressEvent(QKeyEvent *event) {
 		break;
 	default:
 		QGraphicsView::keyPressEvent(event);
+		return;
 	}
 
-	// pass movement input to user object
-	QList<QGraphicsItem*> itemList = scene()->items();
-	for(int i = 0; i < itemList.size(); i++) {
-		if(itemList[i]->type() == QGraphicsItem::UserType) {
-			User *item = (User*) itemList[i];
-			item->setMovement(movement);
-			break;
-		}
-	}
+	user->setMovement(movement);
 }
 
 void FieldView::keyReleaseEvent(QKeyEvent *event) {
@@ -61,13 +73,15 @@ void FieldView::keyReleaseEvent(QKeyEvent *event) {
 		QGraphicsView::keyPressEvent(event);
 	}
 
-	// pass movement input to user object
-	QList<QGraphicsItem*> itemList = scene()->items();
-	for(int i = 0; i < itemList.size(); i++) {
-		if(itemList[i]->type() == QGraphicsItem::UserType) {
-			User *item = (User*) itemList[i];
-			item->setMovement(movement);
-			break;
-		}
-	}
+	user->setMovement(movement);
+}
+
+void FieldView::mousePressEvent(QMouseEvent *event) {
+	mouseClickPos = event->pos();
+	if(mouseClick) spawn();
+}
+
+void FieldView::mouseMoveEvent(QMouseEvent *event) {
+	mouseClickPos = event->pos();
+	if(mouseClick) spawn();
 }
