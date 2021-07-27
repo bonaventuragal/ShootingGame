@@ -3,6 +3,7 @@
 
 #include "user.h"
 #include "borderline.h"
+#include "bullet.h"
 #include "MovementCheck.h"
 #include <QGraphicsView>
 #include <QKeyEvent>
@@ -20,9 +21,9 @@ public:
 
 private:
 	User *user;
-	QTimer *mouseClickTimer;
+	QTimer *bulletTimer;
 	QPoint mouseClickPos;
-	bool mouseClick;
+	bool bulletSpawn;
 
 	void spawn();
 

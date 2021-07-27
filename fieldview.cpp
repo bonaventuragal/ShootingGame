@@ -1,8 +1,9 @@
 #include "fieldview.h"
 
-FieldView::FieldView(QWidget *parent) : QGraphicsView(parent), mouseClick(true) {
-	mouseClickTimer = new QTimer();
-	connect(mouseClickTimer, SIGNAL(timeout()), this, SLOT(mouseClickTimeout()));
+FieldView::FieldView(QWidget *parent) : QGraphicsView(parent), bulletSpawn(true) {
+	// timer for bullet spawning timeout
+	bulletTimer = new QTimer();
+	connect(bulletTimer, SIGNAL(timeout()), this, SLOT(mouseClickTimeout()));
 }
 
 void FieldView::addUser() {
@@ -12,15 +13,25 @@ void FieldView::addUser() {
 }
 
 void FieldView::spawn() {
-	if(!mouseClickTimer->isActive()) {
-		mouseClick = false;
-		mouseClickTimer->start(300);
+	if(!bulletTimer->isActive()) {
+		// start bullet timeout
+		bulletSpawn = false;
+		bulletTimer->start(150);
+
+		// create new bullet
+		Bullet *bullet = new Bullet();
+		bullet->setPos(user->pos().x() + user->boundingRect().width() / 2, user->pos().y() + user->boundingRect().height() / 2 - bullet->boundingRect().height() / 2);
+		bullet->setZValue(-1);
+		bullet->setTarget(mouseClickPos);
+		scene()->addItem(bullet);
+		bullet->startTimer();
 	}
 }
 
 void FieldView::mouseClickTimeout() {
-	mouseClickTimer->stop();
-	mouseClick = true;
+	// bullet spawn timeout done
+	bulletTimer->stop();
+	bulletSpawn = true;
 }
 
 void FieldView::keyPressEvent(QKeyEvent *event) {
@@ -78,10 +89,14 @@ void FieldView::keyReleaseEvent(QKeyEvent *event) {
 
 void FieldView::mousePressEvent(QMouseEvent *event) {
 	mouseClickPos = event->pos();
-	if(mouseClick) spawn();
+
+	// spawn bullet only if not in timeout
+	if(bulletSpawn) spawn();
 }
 
 void FieldView::mouseMoveEvent(QMouseEvent *event) {
 	mouseClickPos = event->pos();
-	if(mouseClick) spawn();
+
+	// spawn bullet only if not in timeout
+	if(bulletSpawn) spawn();
 }

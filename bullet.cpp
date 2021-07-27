@@ -1,7 +1,8 @@
 #include "bullet.h"
 
 Bullet::Bullet() {
-
+	timer = new QTimer();
+	connect(timer, SIGNAL(timeout()), this, SLOT(forward()));
 }
 
 QRectF Bullet::boundingRect() const {
@@ -9,5 +10,37 @@ QRectF Bullet::boundingRect() const {
 }
 
 void Bullet::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-	painter->drawRect(boundingRect());
+	painter->setBrush(QColor(0x00F7FF));
+	if(!detectCollision()) painter->drawEllipse(boundingRect());
+	// delete bullet if colliding
+	else deleteLater();
+}
+
+bool Bullet::detectCollision() const {
+	bool ret = false;
+	QList<QGraphicsItem*> collidingList = scene()->collidingItems(this);
+	for(int i = 0; i < collidingList.size(); i++) {
+		// colliding with user or other bullet does not count
+		if(collidingList[i]->type() != Type && collidingList[i]->type() != UserType) ret = true;
+	}
+	return ret;
+}
+
+void Bullet::setTarget(QPoint target) {
+	this->target = target;
+	angle = findAngle();
+	setRotation(angle);
+}
+
+void Bullet::startTimer() {
+	// bullet movement time
+	timer->start(10);
+}
+
+qreal Bullet::findAngle() {
+	return std::atan2(target.y() - (y() + boundingRect().height() / 2), target.x() - x()) * 180 / PI;
+}
+
+void Bullet::forward() {
+	setPos(mapToParent(4, 0));
 }
