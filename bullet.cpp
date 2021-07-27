@@ -38,7 +38,7 @@ void Bullet::startTimer() {
 }
 
 qreal Bullet::findAngle() {
-	return std::atan2(target.y() - (y() + boundingRect().height() / 2), target.x() - x()) * 180 / PI;
+	return std::atan2(target.y() - y(), target.x() - x()) * 180 / PI;
 }
 
 void Bullet::forward() {

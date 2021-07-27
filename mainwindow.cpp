@@ -15,6 +15,7 @@ MainWindow::MainWindow(QWidget *parent)
 	view->setScene(scene);
 	view->addUser();
 
+	// border
 	BorderLine *topLine = new BorderLine(scene->sceneRect().topLeft(), scene->sceneRect().topRight(), BorderLine::Top);
 	BorderLine *bottomLine = new BorderLine(scene->sceneRect().bottomLeft(), scene->sceneRect().bottomRight(), BorderLine::Bottom);
 	BorderLine *leftLine = new BorderLine(scene->sceneRect().topLeft(), scene->sceneRect().bottomLeft(), BorderLine::Left);
