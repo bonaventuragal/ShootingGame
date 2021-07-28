@@ -11,6 +11,7 @@ CONFIG += c++11
 SOURCES += \
     borderline.cpp \
     bullet.cpp \
+    enemy.cpp \
     fieldview.cpp \
     main.cpp \
     mainwindow.cpp \
@@ -20,6 +21,7 @@ HEADERS += \
     MovementCheck.h \
     borderline.h \
     bullet.h \
+    enemy.h \
     fieldview.h \
     mainwindow.h \
     user.h

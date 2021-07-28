@@ -13,7 +13,10 @@ void Bullet::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 	painter->setBrush(QColor(0x00F7FF));
 	if(!detectCollision()) painter->drawEllipse(boundingRect());
 	// delete bullet if colliding
-	else deleteLater();
+	else {
+		delete timer;
+		deleteLater();
+	}
 }
 
 bool Bullet::detectCollision() const {

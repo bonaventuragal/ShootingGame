@@ -25,7 +25,7 @@ private:
 	QPoint mouseClickPos;
 
 private slots:
-	void spawn();
+	void spawnBullet();
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;

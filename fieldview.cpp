@@ -3,7 +3,7 @@
 FieldView::FieldView(QWidget *parent) : QGraphicsView(parent) {
 	// timer for bullet spawning timeout
 	bulletTimer = new QTimer();
-	connect(bulletTimer, SIGNAL(timeout()), this, SLOT(spawn()));
+	connect(bulletTimer, SIGNAL(timeout()), this, SLOT(spawnBullet()));
 }
 
 void FieldView::addUser() {
@@ -12,7 +12,7 @@ void FieldView::addUser() {
 	scene()->addItem(user);
 }
 
-void FieldView::spawn() {
+void FieldView::spawnBullet() {
 	// create new bullet
 	Bullet *bullet = new Bullet();
 	bullet->setPos(user->pos().x() + user->boundingRect().width() / 2, user->pos().y() + user->boundingRect().height() / 2 - bullet->boundingRect().height() / 2);
@@ -77,7 +77,7 @@ void FieldView::keyReleaseEvent(QKeyEvent *event) {
 
 void FieldView::mousePressEvent(QMouseEvent *event) {
 	mouseClickPos = event->pos();
-	spawn();
+	spawnBullet();
 	bulletTimer->start(150);
 }
 
