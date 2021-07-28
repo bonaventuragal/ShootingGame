@@ -1,6 +1,7 @@
 #ifndef BULLET_H
 #define BULLET_H
 
+#include "user.h"
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QPainter>
@@ -16,7 +17,7 @@ public:
 	Bullet();
 	QRectF boundingRect() const override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
-	bool detectCollision() const;
+	int type() const override;
 	void setTarget(QPoint target);
 	void startTimer();
 
@@ -27,6 +28,7 @@ private:
 	qreal const PI = 3.14159265358979323846;
 
 	qreal findAngle();
+	bool detectCollision() const;
 
 private slots:
 	void forward();

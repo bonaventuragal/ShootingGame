@@ -10,6 +10,13 @@ void FieldView::addUser() {
 	user = new User();
 	user->setPos(scene()->width() / 2 - 10, scene()->height() / 2 - 10);
 	scene()->addItem(user);
+
+//	Enemy *enemy = new Enemy();
+//	enemy->setPos(20, 20);
+//	enemy->setTarget(user->pos());
+//	connect(user, SIGNAL(updatePos(QPointF)), enemy, SLOT(updateTargetPos(QPointF)));
+//	scene()->addItem(enemy);
+//	enemy->startTimer();
 }
 
 void FieldView::spawnBullet() {
@@ -87,4 +94,6 @@ void FieldView::mouseMoveEvent(QMouseEvent *event) {
 
 void FieldView::mouseReleaseEvent(QMouseEvent *event) {
 	bulletTimer->stop();
+
+	Q_UNUSED(event)
 }

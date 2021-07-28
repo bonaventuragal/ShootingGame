@@ -17,6 +17,13 @@ void Bullet::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 		delete timer;
 		deleteLater();
 	}
+
+	Q_UNUSED(option)
+	Q_UNUSED(widget)
+}
+
+int Bullet::type() const {
+	return Bullet::Type;
 }
 
 bool Bullet::detectCollision() const {
@@ -24,7 +31,7 @@ bool Bullet::detectCollision() const {
 	QList<QGraphicsItem*> collidingList = scene()->collidingItems(this);
 	for(int i = 0; i < collidingList.size(); i++) {
 		// colliding with user or other bullet does not count
-		if(collidingList[i]->type() != Type && collidingList[i]->type() != UserType) ret = true;
+		if(collidingList[i]->type() != User::Type && collidingList[i]->type() != Bullet::Type) ret = true;
 	}
 	return ret;
 }

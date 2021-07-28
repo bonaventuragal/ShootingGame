@@ -4,6 +4,7 @@
 #include "user.h"
 #include "borderline.h"
 #include "bullet.h"
+#include "enemy.h"
 #include "MovementCheck.h"
 #include <QGraphicsView>
 #include <QKeyEvent>

@@ -17,6 +17,13 @@ void User::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWid
 
 	painter->setBrush(QBrush(Qt::green));
 	painter->drawEllipse(boundingRect());
+
+	Q_UNUSED(option)
+	Q_UNUSED(widget)
+}
+
+int User::type() const {
+	return User::Type;
 }
 
 void User::setMovement(MovementCheck movement[]) {
@@ -64,4 +71,5 @@ void User::changeMovement() {
 	if(movement[2] == MovementCheck::Moving) x -= 5;
 	if(movement[3] == MovementCheck::Moving) x += 5;
 	setPos(x, y);
+	emit updatePos(pos());
 }

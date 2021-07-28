@@ -11,9 +11,10 @@ public:
 
 	BorderLine(const QPointF &p1, const QPointF &p2, BorderType type);
 	BorderType borderType() const;
+	int type() const override;
 
 private:
-	BorderType type;
+	BorderType m_borderType;
 
 };
 
