@@ -3,8 +3,6 @@
 
 #include "fieldview.h"
 #include "user.h"
-#include "bullet.h"
-#include "enemy.h"
 #include "borderline.h"
 #include <QMainWindow>
 #include <QLayout>
