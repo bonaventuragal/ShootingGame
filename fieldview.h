@@ -23,10 +23,14 @@ public:
 private:
 	User *user;
 	QTimer *bulletTimer;
+	QTimer *enemyTimer;
 	QPoint mouseClickPos;
+
+	QPointF randomSpawnPoint();
 
 private slots:
 	void spawnBullet();
+	void spawnEnemy();
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;

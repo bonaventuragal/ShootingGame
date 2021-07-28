@@ -1,6 +1,7 @@
 #ifndef ENEMY_H
 #define ENEMY_H
 
+#include "borderline.h"
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QPainter>

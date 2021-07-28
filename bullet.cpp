@@ -10,7 +10,7 @@ QRectF Bullet::boundingRect() const {
 }
 
 void Bullet::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) {
-	painter->setBrush(QColor(0x00F7FF));
+	painter->setBrush(QColor(Qt::yellow));
 	if(!detectCollision()) painter->drawEllipse(boundingRect());
 	// delete bullet if colliding
 	else {

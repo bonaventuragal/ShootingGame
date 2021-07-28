@@ -38,7 +38,7 @@ void User::detectCollision() {
 	for(int i = 0; i < collidingList.size(); i++) {
 
 		// colliding with border
-		if(collidingList[i]->type() == QGraphicsLineItem::Type) {
+		if(collidingList[i]->type() == BorderLine::Type) {
 			BorderLine *border = (BorderLine*) collidingList.at(0);
 			BorderLine::BorderType type = border->borderType();
 

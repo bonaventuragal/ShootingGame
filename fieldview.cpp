@@ -4,6 +4,9 @@ FieldView::FieldView(QWidget *parent) : QGraphicsView(parent) {
 	// timer for bullet spawning timeout
 	bulletTimer = new QTimer();
 	connect(bulletTimer, SIGNAL(timeout()), this, SLOT(spawnBullet()));
+
+	enemyTimer = new QTimer();
+	connect(enemyTimer, SIGNAL(timeout()), this, SLOT(spawnEnemy()));
 }
 
 void FieldView::addUser() {
@@ -11,12 +14,41 @@ void FieldView::addUser() {
 	user->setPos(scene()->width() / 2 - 10, scene()->height() / 2 - 10);
 	scene()->addItem(user);
 
-//	Enemy *enemy = new Enemy();
-//	enemy->setPos(20, 20);
-//	enemy->setTarget(user->pos());
-//	connect(user, SIGNAL(updatePos(QPointF)), enemy, SLOT(updateTargetPos(QPointF)));
-//	scene()->addItem(enemy);
-//	enemy->startTimer();
+	// start enemy spawning time
+	enemyTimer->start(750);
+}
+
+QPointF FieldView::randomSpawnPoint() {
+//	srand(time(NULL));
+
+	// set random spawn area (top, bottom, left, right)
+	int random = rand() % 4;
+
+	// set random pos
+	qreal x = 0, y = 0;
+	switch(random) {
+	case 0:
+		// top
+		y = 0;
+		x = rand() % (int) (sceneRect().width() - 20);
+		break;
+	case 1:
+		// bottom
+		y = height() - 40;
+		x = rand() % (int) (sceneRect().width() - 20);
+		break;
+	case 2:
+		// left
+		x = 0;
+		y = rand() % (int) (sceneRect().height() - 20);
+		break;
+	case 3:
+		// right
+		x = width() - 40;
+		y = rand() % (int) (sceneRect().height() - 20);
+		break;
+	}
+	return QPointF(x, y);
 }
 
 void FieldView::spawnBullet() {
@@ -27,6 +59,16 @@ void FieldView::spawnBullet() {
 	bullet->setTarget(mouseClickPos);
 	scene()->addItem(bullet);
 	bullet->startTimer();
+}
+
+void FieldView::spawnEnemy() {
+	// create new enemy
+	Enemy *enemy = new Enemy();
+	enemy->setPos(randomSpawnPoint());
+	enemy->setTarget(user->pos());
+	connect(user, SIGNAL(updatePos(QPointF)), enemy, SLOT(updateTargetPos(QPointF)));
+	scene()->addItem(enemy);
+	enemy->startTimer();
 }
 
 void FieldView::keyPressEvent(QKeyEvent *event) {

@@ -18,6 +18,7 @@ void Enemy::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 	if(!detectCollision()) {
 		painter->drawPolygon(polygon);
 	} else {
+		// delete if colliding
 		delete timer;
 		deleteLater();
 	}
@@ -46,11 +47,15 @@ qreal Enemy::findAngle() {
 bool Enemy::detectCollision() {
 	bool ret = false;
 	QList<QGraphicsItem*> collidingList = scene()->collidingItems(this);
-	ret = !collidingList.isEmpty();
+	for(int i = 0; i < collidingList.size(); i++) {
+		// colliding with other enemy or other border does not count
+		if(collidingList[i]->type() != Enemy::Type && collidingList[i]->type() != BorderLine::Type) ret = true;
+	}
 	return ret;
 }
 
 void Enemy::forward() {
+	// prevent rotated graphic output
 	setRotation(angle);
 	setPos(mapToParent(4, 0));
 	setRotation(0);
