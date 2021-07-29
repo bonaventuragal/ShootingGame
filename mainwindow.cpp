@@ -13,19 +13,20 @@ MainWindow::MainWindow(QWidget *parent)
 	scene->setSceneRect(0, 0, 400, 400);
 
 	view->setScene(scene);
-	view->addUser();
+	view->addBorder();
 
-	// border
-	BorderLine *topLine = new BorderLine(scene->sceneRect().topLeft(), scene->sceneRect().topRight(), BorderLine::Top);
-	BorderLine *bottomLine = new BorderLine(scene->sceneRect().bottomLeft(), scene->sceneRect().bottomRight(), BorderLine::Bottom);
-	BorderLine *leftLine = new BorderLine(scene->sceneRect().topLeft(), scene->sceneRect().bottomLeft(), BorderLine::Left);
-	BorderLine *rightLine = new BorderLine(scene->sceneRect().topRight(), scene->sceneRect().bottomRight(), BorderLine::Right);
-	scene->addItem(topLine);
-	scene->addItem(bottomLine);
-	scene->addItem(leftLine);
-	scene->addItem(rightLine);
+	infoLabel = new QLabel();
+	ui->centralwidget->layout()->addWidget(infoLabel);
+
+	connect(view, SIGNAL(info(QString)), this, SLOT(updateInfo(QString)));
+	connect(ui->startButton, SIGNAL(clicked(bool)), view, SLOT(start()));
+	connect(ui->pauseButton, SIGNAL(clicked(bool)), view, SLOT(pause()));
 }
 
 MainWindow::~MainWindow() {
 	delete ui;
+}
+
+void MainWindow::updateInfo(QString str) {
+	infoLabel->setText(str);
 }

@@ -15,11 +15,13 @@ public:
 	enum {Type = UserType + 3};
 
 	Enemy();
+	~Enemy();
 	QRectF boundingRect() const override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 	int type() const override;
 	void setTarget(QPointF target);
 	void startTimer();
+	void stopTimer();
 
 private:
 	QPolygonF polygon;

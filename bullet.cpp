@@ -5,6 +5,10 @@ Bullet::Bullet() {
 	connect(timer, SIGNAL(timeout()), this, SLOT(forward()));
 }
 
+Bullet::~Bullet() {
+	delete timer;
+}
+
 QRectF Bullet::boundingRect() const {
 	return QRectF(0, 0, 15, 3);
 }
@@ -14,7 +18,6 @@ void Bullet::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QW
 	if(!detectCollision()) painter->drawEllipse(boundingRect());
 	// delete bullet if colliding
 	else {
-		delete timer;
 		deleteLater();
 	}
 
@@ -45,6 +48,10 @@ void Bullet::setTarget(QPoint target) {
 void Bullet::startTimer() {
 	// bullet movement time
 	timer->start(10);
+}
+
+void Bullet::stopTimer() {
+	timer->stop();
 }
 
 qreal Bullet::findAngle() {

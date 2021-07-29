@@ -19,16 +19,23 @@ class FieldView : public QGraphicsView {
 public:
 	FieldView(QWidget *parent = nullptr);
 	void addUser();
+	void addBorder();
 
 private:
 	User *user;
 	QTimer *bulletTimer;
 	QTimer *enemyTimer;
 	QPoint mouseClickPos;
+	bool started;
+	bool paused;
 
 	QPointF randomSpawnPoint();
+	void clearView();
 
 private slots:
+	void start();
+	void pause();
+	void stopGame();
 	void spawnBullet();
 	void spawnEnemy();
 
@@ -38,6 +45,9 @@ protected:
 	void mousePressEvent(QMouseEvent *event) override;
 	void mouseMoveEvent(QMouseEvent *event) override;
 	void mouseReleaseEvent(QMouseEvent *event) override;
+
+signals:
+	void info(QString);
 
 };
 

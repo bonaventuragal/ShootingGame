@@ -5,7 +5,11 @@ Enemy::Enemy() {
 
 	timer = new QTimer();
 	connect(timer, SIGNAL(timeout()), this, SLOT(forward()));
-//	timer->start(100);
+	//	timer->start(100);
+}
+
+Enemy::~Enemy() {
+	delete timer;
 }
 
 QRectF Enemy::boundingRect() const {
@@ -19,7 +23,6 @@ void Enemy::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 		painter->drawPolygon(polygon);
 	} else {
 		// delete if colliding
-		delete timer;
 		deleteLater();
 	}
 
@@ -38,6 +41,10 @@ void Enemy::setTarget(QPointF target) {
 
 void Enemy::startTimer() {
 	timer->start(100);
+}
+
+void Enemy::stopTimer() {
+	timer->stop();
 }
 
 qreal Enemy::findAngle() {

@@ -5,7 +5,11 @@ User::User() {
 
 	timer = new QTimer();
 	connect(timer, SIGNAL(timeout()), this, SLOT(changeMovement()));
-	timer->start(100);
+	startTimer();
+}
+
+User::~User() {
+	delete timer;
 }
 
 QRectF User::boundingRect() const {
@@ -33,6 +37,14 @@ void User::setMovement(MovementCheck movement[]) {
 	}
 }
 
+void User::startTimer() {
+	timer->start(100);
+}
+
+void User::stopTimer() {
+	timer->stop();
+}
+
 void User::detectCollision() {
 	QList<QGraphicsItem*> collidingList = scene()->collidingItems(this);
 	for(int i = 0; i < collidingList.size(); i++) {
@@ -57,6 +69,11 @@ void User::detectCollision() {
 				setPos(pos().x() - 2, pos().y());
 				break;
 			}
+		}
+
+		// colliding with enemy
+		if(collidingList[i]->type() == Enemy::Type) {
+			emit gameOver();
 		}
 	}
 }

@@ -15,11 +15,13 @@ public:
 	enum {Type = UserType + 1};
 
 	Bullet();
+	~Bullet();
 	QRectF boundingRect() const override;
 	void paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWidget *widget) override;
 	int type() const override;
 	void setTarget(QPoint target);
 	void startTimer();
+	void stopTimer();
 
 private:
 	QTimer *timer;

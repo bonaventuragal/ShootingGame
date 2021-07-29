@@ -3,7 +3,7 @@
 
 #include <QGraphicsLineItem>
 
-class BorderLine : public QGraphicsLineItem {
+class BorderLine : public QObject, public QGraphicsLineItem {
 
 public:
 	enum BorderType {Top, Bottom, Left, Right};

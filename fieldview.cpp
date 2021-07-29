@@ -1,6 +1,8 @@
 #include "fieldview.h"
 
-FieldView::FieldView(QWidget *parent) : QGraphicsView(parent) {
+FieldView::FieldView(QWidget *parent) : QGraphicsView(parent), started(false), paused(false) {
+	setFocusPolicy(Qt::StrongFocus);
+
 	// timer for bullet spawning timeout
 	bulletTimer = new QTimer();
 	connect(bulletTimer, SIGNAL(timeout()), this, SLOT(spawnBullet()));
@@ -14,12 +16,10 @@ void FieldView::addUser() {
 	user->setPos(scene()->width() / 2 - 10, scene()->height() / 2 - 10);
 	scene()->addItem(user);
 
-	// start enemy spawning time
-	enemyTimer->start(750);
+	connect(user, SIGNAL(gameOver()), this, SLOT(stopGame()));
 }
 
 QPointF FieldView::randomSpawnPoint() {
-//	srand(time(NULL));
 
 	// set random spawn area (top, bottom, left, right)
 	int random = rand() % 4;
@@ -51,24 +51,144 @@ QPointF FieldView::randomSpawnPoint() {
 	return QPointF(x, y);
 }
 
+void FieldView::clearView() {
+	QList<QGraphicsItem*> itemList = scene()->items();
+	for(int i = 0; i < itemList.size(); i++) {
+		switch(itemList[i]->type()) {
+		case User::Type: {
+			User *user = (User*) itemList[i];
+			user->deleteLater();
+			break;
+		}
+		case Bullet::Type: {
+			Bullet *bullet = (Bullet*) itemList[i];
+			bullet->deleteLater();
+			break;
+		}
+		case Enemy::Type: {
+			Enemy *enemy = (Enemy*) itemList[i];
+			enemy->deleteLater();
+			break;
+		}
+		case BorderLine::Type: {
+			BorderLine *borderLine = (BorderLine*) itemList[i];
+			borderLine->deleteLater();
+			break;
+		}
+		}
+	}
+	addBorder();
+}
+
+void FieldView::addBorder() {
+	BorderLine *topLine = new BorderLine(scene()->sceneRect().topLeft(), scene()->sceneRect().topRight(), BorderLine::Top);
+	BorderLine *bottomLine = new BorderLine(scene()->sceneRect().bottomLeft(), scene()->sceneRect().bottomRight(), BorderLine::Bottom);
+	BorderLine *leftLine = new BorderLine(scene()->sceneRect().topLeft(), scene()->sceneRect().bottomLeft(), BorderLine::Left);
+	BorderLine *rightLine = new BorderLine(scene()->sceneRect().topRight(), scene()->sceneRect().bottomRight(), BorderLine::Right);
+	scene()->addItem(topLine);
+	scene()->addItem(bottomLine);
+	scene()->addItem(leftLine);
+	scene()->addItem(rightLine);
+}
+
+void FieldView::start() {
+	if(!started) {
+		addUser();
+
+		// start enemy spawning time
+		enemyTimer->start(750);
+
+		started = true;
+
+		emit info("Game started");
+	}
+}
+
+void FieldView::pause() {
+	if(started) {
+		QList<QGraphicsItem*> itemList = scene()->items();
+		if(!paused) {
+			for(int i = 0; i < itemList.size(); i++) {
+				if(itemList[i]->type() == Bullet::Type) {
+					Bullet *bullet = (Bullet*) itemList[i];
+					bullet->stopTimer();
+				}
+				if(itemList[i]->type() == Enemy::Type) {
+					Enemy *enemy = (Enemy*) itemList[i];
+					enemy->stopTimer();
+				}
+			}
+			user->stopTimer();
+			enemyTimer->stop();
+			paused = true;
+			emit info("Game paused");
+		} else {
+			for(int i = 0; i < itemList.size(); i++) {
+				if(itemList[i]->type() == Bullet::Type) {
+					Bullet *bullet = (Bullet*) itemList[i];
+					bullet->startTimer();
+				}
+				if(itemList[i]->type() == Enemy::Type) {
+					Enemy *enemy = (Enemy*) itemList[i];
+					enemy->startTimer();
+				}
+			}
+			user->startTimer();
+			enemyTimer->start(750);
+			paused = false;
+			emit info("Game resumed");
+		}
+	}
+}
+
+void FieldView::stopGame() {
+	if(started) {
+		// stop timers to prevent unwanted udpate
+		bulletTimer->stop();
+		enemyTimer->stop();
+		user->stopTimer();
+		QList<QGraphicsItem*> itemList = scene()->items();
+		for(int i = 0; i < itemList.size(); i++) {
+			if(itemList[i]->type() == Bullet::Type) {
+				Bullet *bullet = (Bullet*) itemList[i];
+				bullet->stopTimer();
+			}
+			if(itemList[i]->type() == Enemy::Type) {
+				Enemy *enemy = (Enemy*) itemList[i];
+				enemy->stopTimer();
+			}
+		}
+
+		clearView();
+		started = false;
+		paused = false;
+
+		emit info("Game over");
+	}
+}
+
 void FieldView::spawnBullet() {
-	// create new bullet
-	Bullet *bullet = new Bullet();
-	bullet->setPos(user->pos().x() + user->boundingRect().width() / 2, user->pos().y() + user->boundingRect().height() / 2 - bullet->boundingRect().height() / 2);
-	bullet->setZValue(-1);
-	bullet->setTarget(mouseClickPos);
-	scene()->addItem(bullet);
-	bullet->startTimer();
+	if(started && !paused) {
+		// create new bullet
+		Bullet *bullet = new Bullet();
+		bullet->setPos(user->pos().x() + user->boundingRect().width() / 2, user->pos().y() + user->boundingRect().height() / 2 - bullet->boundingRect().height() / 2);
+		bullet->setZValue(-1);
+		bullet->setTarget(mouseClickPos);
+		scene()->addItem(bullet);
+		bullet->startTimer();
+	}
 }
 
 void FieldView::spawnEnemy() {
-	// create new enemy
-	Enemy *enemy = new Enemy();
-	enemy->setPos(randomSpawnPoint());
-	enemy->setTarget(user->pos());
-	connect(user, SIGNAL(updatePos(QPointF)), enemy, SLOT(updateTargetPos(QPointF)));
-	scene()->addItem(enemy);
-	enemy->startTimer();
+	if(started && !paused) {
+		// create new enemy
+		Enemy *enemy = new Enemy();
+		enemy->setPos(randomSpawnPoint());
+		enemy->setTarget(user->pos());
+		connect(user, SIGNAL(updatePos(QPointF)), enemy, SLOT(updateTargetPos(QPointF)));
+		scene()->addItem(enemy);
+		enemy->startTimer();
+	}
 }
 
 void FieldView::keyPressEvent(QKeyEvent *event) {
@@ -90,12 +210,15 @@ void FieldView::keyPressEvent(QKeyEvent *event) {
 	case Qt::Key_D:
 		movement[3] = MovementCheck::Moving;
 		break;
+	case Qt::Key_Space:
+		pause();
+		break;
 	default:
 		QGraphicsView::keyPressEvent(event);
 		return;
 	}
 
-	user->setMovement(movement);
+	if(started && !paused) user->setMovement(movement);
 }
 
 void FieldView::keyReleaseEvent(QKeyEvent *event) {
@@ -121,7 +244,7 @@ void FieldView::keyReleaseEvent(QKeyEvent *event) {
 		QGraphicsView::keyPressEvent(event);
 	}
 
-	user->setMovement(movement);
+	if(started && !paused) user->setMovement(movement);
 }
 
 void FieldView::mousePressEvent(QMouseEvent *event) {

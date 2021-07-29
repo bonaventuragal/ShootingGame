@@ -6,6 +6,7 @@
 #include "borderline.h"
 #include <QMainWindow>
 #include <QLayout>
+#include <QLabel>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -20,9 +21,14 @@ public:
 	MainWindow(QWidget *parent = nullptr);
 	~MainWindow();
 
+public slots:
+	void updateInfo(QString str);
+
 private:
 	Ui::MainWindow *ui;
 	FieldView *view;
 	User *user;
+	QLabel *infoLabel;
+
 };
 #endif // MAINWINDOW_H
