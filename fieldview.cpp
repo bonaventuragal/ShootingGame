@@ -1,6 +1,6 @@
 #include "fieldview.h"
 
-FieldView::FieldView(QWidget *parent) : QGraphicsView(parent), started(false), paused(false), score(0) {
+FieldView::FieldView(QWidget *parent) : QGraphicsView(parent), started(false), paused(false), score(0), level(1) {
 	setFocusPolicy(Qt::StrongFocus);
 
 	// timer for bullet spawning timeout
@@ -80,6 +80,10 @@ void FieldView::clearView() {
 	addBorder();
 }
 
+int FieldView::enemySpawnRate() {
+	return std::max(250, 750 - (level - 1) * 50);
+}
+
 void FieldView::addBorder() {
 	BorderLine *topLine = new BorderLine(scene()->sceneRect().topLeft(), scene()->sceneRect().topRight(), BorderLine::Top);
 	BorderLine *bottomLine = new BorderLine(scene()->sceneRect().bottomLeft(), scene()->sceneRect().bottomRight(), BorderLine::Bottom);
@@ -93,13 +97,14 @@ void FieldView::addBorder() {
 
 void FieldView::start() {
 	if(!started) {
+		level = 1;
 		score = 0;
 		emit updateScore(score);
 
 		addUser();
 
 		// start enemy spawning time
-		enemyTimer->start(750);
+		enemyTimer->start(enemySpawnRate());
 
 		started = true;
 
@@ -137,7 +142,7 @@ void FieldView::pause() {
 				}
 			}
 			user->startTimer();
-			enemyTimer->start(750);
+			enemyTimer->start(enemySpawnRate());
 			paused = false;
 			emit info("Game resumed");
 		}
@@ -184,6 +189,8 @@ void FieldView::spawnBullet() {
 
 void FieldView::spawnEnemy() {
 	if(started && !paused) {
+		enemyTimer->stop();
+
 		// create new enemy
 		Enemy *enemy = new Enemy();
 		enemy->setPos(randomSpawnPoint());
@@ -193,12 +200,18 @@ void FieldView::spawnEnemy() {
 		scene()->addItem(enemy);
 		enemy->startTimer();
 
+		enemyTimer->start(enemySpawnRate());
 	}
 }
 
 void FieldView::enemyShot() {
 	score += 1;
 	emit updateScore(score);
+
+	if(score % 25 == 0) {
+		level++;
+		emit info("Level up! Level: " + QString::number(level));
+	}
 }
 
 void FieldView::keyPressEvent(QKeyEvent *event) {

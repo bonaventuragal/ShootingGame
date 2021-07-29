@@ -29,9 +29,11 @@ private:
 	bool started;
 	bool paused;
 	int score;
+	int level;
 
 	QPointF randomSpawnPoint();
 	void clearView();
+	int enemySpawnRate();
 
 private slots:
 	void start();
