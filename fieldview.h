@@ -28,6 +28,7 @@ private:
 	QPoint mouseClickPos;
 	bool started;
 	bool paused;
+	int score;
 
 	QPointF randomSpawnPoint();
 	void clearView();
@@ -38,6 +39,7 @@ private slots:
 	void stopGame();
 	void spawnBullet();
 	void spawnEnemy();
+	void enemyShot();
 
 protected:
 	void keyPressEvent(QKeyEvent *event) override;
@@ -48,6 +50,7 @@ protected:
 
 signals:
 	void info(QString);
+	void updateScore(int);
 
 };
 

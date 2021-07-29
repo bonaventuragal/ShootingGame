@@ -19,6 +19,7 @@ MainWindow::MainWindow(QWidget *parent)
 	ui->centralwidget->layout()->addWidget(infoLabel);
 
 	connect(view, SIGNAL(info(QString)), this, SLOT(updateInfo(QString)));
+	connect(view, SIGNAL(updateScore(int)), ui->scoreDisplay, SLOT(display(int)));
 	connect(ui->startButton, SIGNAL(clicked(bool)), view, SLOT(start()));
 	connect(ui->pauseButton, SIGNAL(clicked(bool)), view, SLOT(pause()));
 }

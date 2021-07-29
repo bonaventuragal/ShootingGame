@@ -1,6 +1,6 @@
 #include "fieldview.h"
 
-FieldView::FieldView(QWidget *parent) : QGraphicsView(parent), started(false), paused(false) {
+FieldView::FieldView(QWidget *parent) : QGraphicsView(parent), started(false), paused(false), score(0) {
 	setFocusPolicy(Qt::StrongFocus);
 
 	// timer for bullet spawning timeout
@@ -93,6 +93,9 @@ void FieldView::addBorder() {
 
 void FieldView::start() {
 	if(!started) {
+		score = 0;
+		emit updateScore(score);
+
 		addUser();
 
 		// start enemy spawning time
@@ -186,9 +189,16 @@ void FieldView::spawnEnemy() {
 		enemy->setPos(randomSpawnPoint());
 		enemy->setTarget(user->pos());
 		connect(user, SIGNAL(updatePos(QPointF)), enemy, SLOT(updateTargetPos(QPointF)));
+		connect(enemy, SIGNAL(shot()), this, SLOT(enemyShot()));
 		scene()->addItem(enemy);
 		enemy->startTimer();
+
 	}
+}
+
+void FieldView::enemyShot() {
+	score += 1;
+	emit updateScore(score);
 }
 
 void FieldView::keyPressEvent(QKeyEvent *event) {

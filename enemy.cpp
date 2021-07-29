@@ -1,6 +1,6 @@
 #include "enemy.h"
 
-Enemy::Enemy() {
+Enemy::Enemy() : gotShot(false) {
 	polygon << QPointF(10., 0) << QPointF(0., 20.) << QPointF(20., 20.);
 
 	timer = new QTimer();
@@ -22,6 +22,9 @@ void Enemy::paint(QPainter *painter, const QStyleOptionGraphicsItem *option, QWi
 	if(!detectCollision()) {
 		painter->drawPolygon(polygon);
 	} else {
+		// add to score
+		if(gotShot) emit shot();
+
 		// delete if colliding
 		deleteLater();
 	}
@@ -57,6 +60,7 @@ bool Enemy::detectCollision() {
 	for(int i = 0; i < collidingList.size(); i++) {
 		// colliding with other enemy or other border does not count
 		if(collidingList[i]->type() != Enemy::Type && collidingList[i]->type() != BorderLine::Type) ret = true;
+		if(collidingList[i]->type() == Bullet::Type) gotShot = true;
 	}
 	return ret;
 }

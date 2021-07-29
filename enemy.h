@@ -2,6 +2,7 @@
 #define ENEMY_H
 
 #include "borderline.h"
+#include "bullet.h"
 #include <QGraphicsItem>
 #include <QGraphicsScene>
 #include <QPainter>
@@ -29,6 +30,7 @@ private:
 	QTimer *timer;
 	qreal angle;
 	qreal const PI = 3.14159265358979323846;
+	bool gotShot;
 
 	qreal findAngle();
 	bool detectCollision();
@@ -36,6 +38,9 @@ private:
 private slots:
 	void forward();
 	void updateTargetPos(QPointF pos);
+
+signals:
+	void shot();
 
 };
 
