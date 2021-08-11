@@ -5,6 +5,7 @@ MainWindow::MainWindow(QWidget *parent)
 	: QMainWindow(parent)
 	, ui(new Ui::MainWindow) {
 	ui->setupUi(this);
+	setFixedSize(width(), height());
 
 	view = new FieldView(ui->centralwidget);
 	ui->centralwidget->layout()->addWidget(view);
