@@ -107,6 +107,7 @@ void FieldView::start() {
 		enemyTimer->start(enemySpawnRate());
 
 		started = true;
+		setFocus();
 
 		emit info("Game started");
 	}
@@ -144,6 +145,7 @@ void FieldView::pause() {
 			user->startTimer();
 			enemyTimer->start(enemySpawnRate());
 			paused = false;
+			setFocus();
 			emit info("Game resumed");
 		}
 	}
